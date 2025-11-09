@@ -47,10 +47,10 @@ import {
   fetchUserProfile, 
   logoutUser 
 } from "@/lib/slices/authSlice"
-import { 
-  fetchBudgets, 
-  fetchBudgetTemplates 
-} from "@/lib/slices/budgetSlice"
+
+import {
+   fetchTemplates as fetchBudgetTemplates
+} from "@/lib/slices/templateSlice"
 import { 
   fetchExpenses, 
   fetchExpenseStats 
@@ -65,6 +65,7 @@ import {
   fetchChatSessions, 
   sendMessage 
 } from "@/lib/slices/chatbotSlice"
+import placeholder from "../public/placeholder.svg"
 
 export default function BudgeTlyApp() {
   const dispatch = useAppDispatch()
@@ -75,11 +76,11 @@ export default function BudgeTlyApp() {
     isLoading: authLoading, 
     error: authError 
   } = useAppSelector(state => state.auth)
-  const { 
-    budgets, 
-    budgetTemplates: reduxBudgetTemplates, 
-    isLoading: budgetLoading 
-  } = useAppSelector(state => state.budget)
+  // const { 
+  //   budgets, 
+  //   budgetTemplates: reduxBudgetTemplates, 
+  //   isLoading: budgetLoading 
+  // } = useAppSelector(state => state.budget)
   const { 
     expenses, 
     stats: expenseStats, 
@@ -118,7 +119,7 @@ export default function BudgeTlyApp() {
   useEffect(() => {
     if (isAuthenticated && user) {
       dispatch(fetchUserProfile())
-      dispatch(fetchBudgets())
+      // dispatch(fetchBudgets())
       dispatch(fetchBudgetTemplates())
       dispatch(fetchExpenses())
       dispatch(fetchExpenseStats())
@@ -473,7 +474,7 @@ export default function BudgeTlyApp() {
                 New Budget
               </Button>
               <Avatar className="w-8 h-8">
-                <AvatarImage src={profile?.avatar} />
+                <AvatarImage src={profile?.avatar|| placeholder} />
                 <AvatarFallback>{user?.first_name?.[0] || user?.username?.[0]}</AvatarFallback>
               </Avatar>
               <Button variant="ghost" size="sm" onClick={handleLogout}>
@@ -530,7 +531,7 @@ export default function BudgeTlyApp() {
                   <div>
                     <p className="text-sm text-muted-foreground">Savings Goal</p>
                     <p className="text-xl font-bold">
-                      ${profile?.savings_goal || 0}
+                      ${300} {/* Placeholder for savings goal */}
                     </p>
                   </div>
                 </div>
@@ -581,7 +582,7 @@ export default function BudgeTlyApp() {
                         cy="50%"
                         outerRadius={80}
                         dataKey="value"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent = 0 }) => `${name} ${(percent * 100).toFixed(0)}%`}
                       >
                         {budgetData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
